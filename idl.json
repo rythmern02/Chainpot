@@ -1,0 +1,125 @@
+{
+  "version": "0.1.0",
+  "name": "chain_pot",
+  "instructions": [
+    {
+      "name": "initializePool",
+      "accounts": [
+        { "name": "pool", "isMut": true, "isSigner": false },
+        { "name": "admin", "isMut": true, "isSigner": true },
+        { "name": "systemProgram", "isMut": false, "isSigner": false }
+      ],
+      "args": [
+        { "name": "poolId", "type": "u64" },
+        { "name": "memberCount", "type": "u8" },
+        { "name": "monthlyContribution", "type": "u64" }
+      ]
+    },
+    {
+      "name": "joinPool",
+      "accounts": [
+        { "name": "pool", "isMut": true, "isSigner": false },
+        { "name": "user", "isMut": true, "isSigner": true },
+        { "name": "nftMint", "isMut": true, "isSigner": false },
+        { "name": "nftToken", "isMut": true, "isSigner": false },
+        { "name": "tokenProgram", "isMut": false, "isSigner": false },
+        { "name": "systemProgram", "isMut": false, "isSigner": false }
+      ],
+      "args": [{ "name": "poolId", "type": "u64" }]
+    },
+    {
+      "name": "contribute",
+      "accounts": [
+        { "name": "pool", "isMut": true, "isSigner": false },
+        { "name": "user", "isMut": false, "isSigner": true },
+        { "name": "userToken", "isMut": true, "isSigner": false },
+        { "name": "poolToken", "isMut": true, "isSigner": false },
+        { "name": "tokenProgram", "isMut": false, "isSigner": false }
+      ],
+      "args": [
+        { "name": "poolId", "type": "u64" },
+        { "name": "amount", "type": "u64" }
+      ]
+    },
+    {
+      "name": "placeBid",
+      "accounts": [
+        { "name": "pool", "isMut": true, "isSigner": false },
+        { "name": "user", "isMut": false, "isSigner": true }
+      ],
+      "args": [
+        { "name": "poolId", "type": "u64" },
+        { "name": "bidAmount", "type": "u64" }
+      ]
+    },
+    {
+      "name": "endCycle",
+      "accounts": [
+        { "name": "pool", "isMut": true, "isSigner": false },
+        { "name": "winner", "isMut": false, "isSigner": true },
+        { "name": "poolToken", "isMut": true, "isSigner": false },
+        { "name": "winnerToken", "isMut": true, "isSigner": false },
+        { "name": "tokenProgram", "isMut": false, "isSigner": false }
+      ],
+      "args": [{ "name": "poolId", "type": "u64" }]
+    },
+    {
+      "name": "closePool",
+      "accounts": [
+        { "name": "pool", "isMut": true, "isSigner": false },
+        { "name": "admin", "isMut": true, "isSigner": true }
+      ],
+      "args": [{ "name": "poolId", "type": "u64" }]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Pool",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          { "name": "poolId", "type": "u64" },
+          { "name": "admin", "type": "publicKey" },
+          { "name": "memberCount", "type": "u8" },
+          { "name": "monthlyContribution", "type": "u64" },
+          { "name": "currentCycle", "type": "u8" },
+          { "name": "totalAmount", "type": "u64" },
+          { "name": "members", "type": { "vec": "publicKey" } },
+          { "name": "nfts", "type": { "vec": "publicKey" } },
+          { "name": "currentBid", "type": { "option": "u64" } },
+          { "name": "currentWinner", "type": { "option": "publicKey" } }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    { "code": 6000, "name": "PoolFull", "msg": "Pool is already full" },
+    {
+      "code": 6001,
+      "name": "AlreadyJoined",
+      "msg": "User has already joined the pool"
+    },
+    {
+      "code": 6002,
+      "name": "NotAMember",
+      "msg": "User is not a member of this pool"
+    },
+    {
+      "code": 6003,
+      "name": "InvalidContribution",
+      "msg": "Invalid contribution amount"
+    },
+    { "code": 6004, "name": "PoolEnded", "msg": "Pool has ended" },
+    {
+      "code": 6005,
+      "name": "BidTooHigh",
+      "msg": "Bid is not lower than the current bid"
+    },
+    {
+      "code": 6006,
+      "name": "NotTheWinner",
+      "msg": "Not the winner of the current cycle"
+    },
+    { "code": 6007, "name": "PoolNotEnded", "msg": "Pool has not ended yet" }
+  ]
+}
